@@ -5,7 +5,7 @@ import { RootLayout } from "./layouts";
 import { Books, Dashboard, Homepage, Login, Profiles, Signup } from "./pages";
 import { PrivateRoute } from "./components/common";
 import { useUserStore } from "./lib/store";
-
+import { Toaster } from "@/components/ui/toaster"
 function App() {
   const { user } = useUserStore();
 
@@ -24,6 +24,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
       </Routes>
+      <Toaster />
     </BrowserRouter>
   );
 }

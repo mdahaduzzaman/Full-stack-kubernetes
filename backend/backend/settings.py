@@ -10,16 +10,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = str(os.environ.get("DEBUG")) == "1"
 
-ALLOWED_HOSTS = []
-
-ENV_ALLOWED_HOST = os.environ.get("ALLOWED_HOSTS")
-
-if ENV_ALLOWED_HOST:
-    ALLOWED_HOSTS = ENV_ALLOWED_HOST.split(",")
-
+ALLOWED_HOST = os.environ.get("ALLOWED_HOSTS", "").split()
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -29,7 +22,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # external
     "rest_framework",
-    'rest_framework_simplejwt',
+    "rest_framework_simplejwt",
+    "corsheaders",
 
     # internal
     "books",
@@ -38,6 +32,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -146,3 +141,6 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+# CORS HEADERS
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000").split(',')
