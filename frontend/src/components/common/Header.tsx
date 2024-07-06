@@ -1,26 +1,36 @@
-import { Link, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { useUserStore } from "@/lib/store";
+import useApi from "@/lib/useApi";
+import { Link } from "react-router-dom";
 
 function Header() {
-  const navigate = useNavigate();
+  const { user } = useUserStore();
+  const { logout } = useApi();
   const handleLogout = () => {
-    localStorage.clear();
-    Cookies.remove("all", { path: "/" });
-
-    navigate("/login");
+    logout();
   };
 
   return (
-    <header className="flex items-center gap-5 px-20 py-4 w-full ">
-      <Link to={"/"}>Home</Link>
-      <Link to={"/dashboard"}>Dashboard</Link>
-      <Link to={"/books"}>Books</Link>
-      <Link to={"/login"}>Login</Link>
-      <Link to={"/signup"}>Sign Up</Link>
-      <button onClick={handleLogout}>
-        Logout
-      </button>
-      <Link to={"/profiles"}>Profiles</Link>
+    <header className="flex items-center justify-between px-20 py-4 w-full border-b">
+      <div className="flex gap-5">
+        <Link to={"/"}>Home</Link>
+        <Link to={"/dashboard"}>Dashboard</Link>
+        <Link to={"/books"}>Books</Link>
+      </div>
+      <div className="flex gap-5">
+        {/* if user isn't present showing the Login and Sign Up */}
+        {!user.id && (
+          <>
+            <Link to={"/login"}>Login</Link>
+            <Link to={"/signup"}>Sign Up</Link>
+          </>
+        )}
+        <Link to={"/profiles"}>Profiles</Link>
+        {/* if user is present showing the Logout */}
+        {user.id && <button onClick={handleLogout}>Logout</button>}
+        {user.first_name && (
+          <span>{user.first_name + " " + user.last_name}</span>
+        )}
+      </div>
     </header>
   );
 }

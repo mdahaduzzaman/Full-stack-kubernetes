@@ -21,6 +21,7 @@ import useApi from "@/lib/useApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -83,7 +84,13 @@ const defaultValues = {
 export default function Signup() {
   const { toast } = useToast();
   const navigate = useNavigate()
-  const { add } = useUserStore()
+  const { add, user } = useUserStore();
+
+  useEffect(() => {
+    if (user && user.id) {
+      navigate("/dashboard");
+    }
+  }, [user]);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

@@ -1,32 +1,44 @@
 import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import Cookies from "js-cookie";
+import { useUserStore } from "./store";
+import { toast } from "@/components/ui/use-toast";
 
 // Create an Axios instance using the base URL from the environment variable
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const REFRESH_URL = import.meta.env.VITE_REFRESH_URL || "http://localhost:8000/api/users/token/refresh/";
-
-// Function to get a new access token using the refresh token
-const refreshAccessToken = async (): Promise<string> => {
-  try {
-    const response = await axios.post<{
-      accessToken: string;
-    }>(REFRESH_URL, {
-      refreshToken: Cookies.get("refreshToken"),
-    });
-
-    // Update the access token in Cookies
-    Cookies.set("accessToken", response.data.accessToken, { path: "/" });
-
-    return response.data.accessToken;
-  } catch (error) {
-    console.error("Failed to refresh access token", error);
-    throw error;
-  }
-};
+const REFRESH_URL =
+  import.meta.env.VITE_REFRESH_URL ||
+  "http://localhost:8000/api/users/token/refresh/";
 
 function useInterceptor() {
+  const { reset } = useUserStore();
+  // Function to get a new access token using the refresh token
+  const refreshAccessToken = async (): Promise<string> => {
+    try {
+      const response = await axios.post<{
+        access: string;
+      }>(REFRESH_URL, {
+        refresh: Cookies.get("refreshToken"),
+      });
+
+      // Update the access token in Cookies
+      Cookies.set("accessToken", response.data.access, { path: "/" });
+
+      return response.data.access;
+    } catch (error) {
+      localStorage.clear();
+      Cookies.remove("all", { path: "/" });
+      reset();
+      toast({
+        title: "Session expired",
+        variant: "black",
+      });
+      throw error;
+    }
+  };
+
   const instance = axios.create({
     baseURL: API_URL,
+    timeout: 10000
   });
 
   // Request instance to add the access token to the headers
@@ -44,8 +56,7 @@ function useInterceptor() {
   );
 
   // Response instance to handle token refresh
-  instance.interceptors.response.use(
-    (response: AxiosResponse) => {
+  instance.interceptors.response.use((response: AxiosResponse) => {
       return response;
     },
     async (error) => {

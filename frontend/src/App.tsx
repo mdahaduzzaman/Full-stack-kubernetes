@@ -5,7 +5,7 @@ import { RootLayout } from "./layouts";
 import { Books, Dashboard, Homepage, Login, Profiles, Signup } from "./pages";
 import { PrivateRoute } from "./components/common";
 import { useUserStore } from "./lib/store";
-import { Toaster } from "@/components/ui/toaster"
+import { Toaster } from "@/components/ui/toaster";
 function App() {
   const { user } = useUserStore();
 
@@ -15,11 +15,17 @@ function App() {
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Homepage />} />
           <Route
-            path="/dashboard"
+            path="dashboard"
             element={<PrivateRoute user={user} children={<Dashboard />} />}
           />
-          <Route path="books" element={<Books />} />
-          <Route path="profiles" element={<Profiles />} />
+          <Route
+            path="books"
+            element={<PrivateRoute user={user} children={<Books />} />}
+          />
+          <Route
+            path="profiles"
+            element={<PrivateRoute user={user} children={<Profiles />} />}
+          />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

@@ -1,10 +1,11 @@
 from rest_framework.routers import SimpleRouter
 
-from books.views import BookModelViewSet
+from order.views import OrderModelViewSet
 
 router = SimpleRouter()
 
-router.register("books", BookModelViewSet)
+router.register("orders", OrderModelViewSet)
 
 urlpatterns = []
+
 urlpatterns += router.urls
